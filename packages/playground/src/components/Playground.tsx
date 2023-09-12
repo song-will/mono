@@ -4,7 +4,11 @@ export default defineComponent({
     name: 'PlayGround',
     setup() {
         return () => (
-            <div>playground</div>
+            <div>
+                <div>nihaoya</div>
+                <div>nihaoyaKFWEKPFKPded123</div>
+                <div>nihaoyaKFWEKPFKPded123</div>
+            </div>
         )
     }
 })

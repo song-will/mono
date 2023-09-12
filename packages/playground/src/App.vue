@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import Playground from './components/Playground';
+import { onMounted } from 'vue';
+onMounted(() => {
+  console.log('mounted')
+  const {locale, timeZone} = Intl.DateTimeFormat().resolvedOptions()
+  console.log({
+    locale,
+    timeZone
+  })
+})
 </script>
 
 <template>
