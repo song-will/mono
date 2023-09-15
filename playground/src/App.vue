@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import Playground from './components/Playground';
 import { onMounted } from 'vue';
+import FormWrapper from './components/FormWrapper.vue';
 onMounted(() => {
   console.log('mounted')
   const {locale, timeZone} = Intl.DateTimeFormat().resolvedOptions()
@@ -15,12 +16,13 @@ onMounted(() => {
 <template>
   <header>
     <Playground />
-    <div class="wrapper">
+    <FormWrapper />
+    <!-- <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
-    </div>
+    </div> -->
   </header>
 
   <RouterView />

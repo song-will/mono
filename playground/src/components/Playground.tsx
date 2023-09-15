@@ -5,9 +5,7 @@ export default defineComponent({
     setup() {
         return () => (
             <div>
-                <div>nihaoya</div>
-                <div>nihaoyaKFWEKPFKPded123</div>
-                <div>nihaoyaKFWEKPFKPded123</div>
+                <h1>PlayGround</h1>
             </div>
         )
     }
