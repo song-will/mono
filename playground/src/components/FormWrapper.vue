@@ -1,7 +1,18 @@
 <template>
     <div>
-        <FormComp v-model:form-data="formData" @update:form-data="update" />
-        <MyInput v-model="formData.content" />
+        <!-- <FormComp v-model:form-data="formData" @update:form-data="update" /> -->
+        <MyInput v-model="formData.content">
+            <template #header>
+                <div>
+                    {{ 'header-f' }} FormWrapper
+                </div>
+            </template>
+            <template #footer>
+                <div>
+                    {{ 'footer-f' }} FormWrapper
+                </div>
+            </template>
+        </MyInput>
     </div>
 </template>
 
@@ -14,7 +25,8 @@ const formData = ref({
     content: 'hello',
 })
 
-const update = (data) => {
+
+const update = (data:any) => {
     formData.value = {...data}
 }
 
