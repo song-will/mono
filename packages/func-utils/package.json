@@ -2,7 +2,12 @@
   "name": "func-utils",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "dist/func-utils.cjs.js",
+  "module": "dist/func-utils.esm.js",
+  "browser": "dist/func-utils.umd.js",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

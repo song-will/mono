@@ -1,3 +1,3 @@
-import funcUtils from "func-utils";
+// import funcUtils from "func-utils";
 
-funcUtils.createGobang()
+// funcUtils.createGobang()
