@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@exile_song/func-utils": "workspace:^",
     "element-plus": "^2.3.12",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
