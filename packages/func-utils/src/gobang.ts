@@ -1,9 +1,9 @@
-// interface Gobang {
-//     name: string;
-//     row: number,
-//     col: number,
-// }
-const createGobang = () => {
+interface Gobang {
+    name: string;
+    row: number,
+    col: number,
+}
+const createGobang = (): Gobang => {
     console.log('gobang')
     return {
         name: 'gobang',
@@ -11,6 +11,7 @@ const createGobang = () => {
         col: 15,
     }
 }
+
 
 const add = (a:number, b: number) => {
     return a + b

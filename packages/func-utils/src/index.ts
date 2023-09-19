@@ -1,7 +1,10 @@
-import  createGobang, {add}  from './gobang.ts'
+import { add } from './gobang'
+console.log('index.ts')
 
+add(1,2)
+
+console.log((add(1, 2)))
 
 export {
-    createGobang,
     add
-} 
+}
