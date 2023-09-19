@@ -7,25 +7,25 @@ export default {
   input: 'src/index.ts',  
   output: [  
     {  
-      file: 'dist/func-utils.es.js',  
+      file: 'dist/es/func-utils.es.js',  
       format: 'es',  
       sourcemap: true,  
     },  
     {  
-      file: 'dist/func-utils.cjs.js',  
+      file: 'dist/cjs/func-utils.cjs.js',  
       format: 'cjs',  
       sourcemap: true,  
     },  
     {
-      file: 'dist/func-utils.umd.js',  
+      file: 'dist/umd/func-utils.umd.js',  
       format: 'umd',  
-      // sourcemap: true,
+      sourcemap: true,
       name: '_$'
     },
     {
-      file: 'dist/func-utils.iife.js',  
+      file: 'dist/iife/func-utils.iife.js',  
       format: 'iife',  
-      // sourcemap: true,  
+      sourcemap: true,  
       name: '_$'
     }
   ],  

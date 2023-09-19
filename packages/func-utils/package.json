@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "dist/func-utils.cjs.js",
-  "module": "dist/func-utils.es.js",
-  "browser": "dist/func-utils.umd.js",
+  "main": "dist/cjs/func-utils.cjs.js",
+  "module": "dist/es/func-utils.es.js",
+  "browser": "dist/umd/func-utils.umd.js",
   "files": [
     "dist/"
   ],
