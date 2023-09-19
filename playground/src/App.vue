@@ -16,7 +16,7 @@ onMounted(() => {
 <template>
   <header>
     <Playground />
-    <FormWrapper />
+    <!-- <FormWrapper /> -->
     <!-- <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -25,7 +25,7 @@ onMounted(() => {
     </div> -->
   </header>
 
-  <RouterView />
+  <!-- <RouterView /> -->
 </template>
 
 <style scoped>

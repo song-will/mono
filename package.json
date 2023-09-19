@@ -6,7 +6,8 @@
   "type": "module",
   "main": "index.js",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "playground"
   ],
   "scripts": {
     "build": "rollup -c scripts/build.js"
@@ -15,13 +16,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "execa": "^8.0.1",
+    "@exile_song/func-utils": "1.0.2",
     "rollup": "^3.29.1",
     "rollup-plugin-typescript2": "^0.35.0",
     "typescript": "~5.1.6",
     "vite": "^4.4.9"
   },
   "devDependencies": {
-    "@agilgur5/tsconfig": "^0.1.0"
+    "pnpm": "^8.7.6"
   }
 }

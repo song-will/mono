@@ -1,4 +1,4 @@
-import { add } from './gobang'
+import Gobang, { add } from './gobang'
 console.log('index.ts')
 
 add(1,2)
@@ -6,5 +6,6 @@ add(1,2)
 console.log((add(1, 2)))
 
 export {
-    add
+    add,
+    Gobang
 }
