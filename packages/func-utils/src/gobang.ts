@@ -17,7 +17,9 @@ interface CanvasAndCtx {
     canvas: HTMLCanvasElement
     ctx: CanvasRenderingContext2D | null
 }
-
+// 1 黑 
+// 2 白
+// 0 空
 type Point = 0 | 1 | 2
 
 interface GobangOptions {
@@ -63,7 +65,7 @@ class Gobang {
         return board.map((arr, index) => {
             return new Proxy(arr, {
                 set(target: Point[], prop: PropertyKey, value: Point): boolean {
-                    self.trigger(index, prop as number, value)
+                    self.trigger(prop as number, index,value)
                     return Reflect.set(target, prop, value)
                 }
             })
@@ -76,12 +78,22 @@ class Gobang {
             col,
             value
         })
+        this.drawChessByRowCol(value, row, col)
     }
-    downChess() {
 
+    drawChessByRowCol (chessType: Point, x: number, y: number){
+        x  = x * this.itemGap + this.itemGap / 2
+        y = y * this.itemGap + this.itemGap / 2
+        this.drawChess(chessType, x, y)
+    }
+    drawChess(chessType: Point, x: number, y: number, r = 5) {
+        (this.ctxChess as CanvasRenderingContext2D).fillStyle = chessType === 1 ? '#111' : '#eee';
+        (this.ctxChess as CanvasRenderingContext2D).beginPath();
+        (this.ctxChess as CanvasRenderingContext2D).arc(x, y, r, 0, 2 * Math.PI);
+        this.ctxChess?.fill();
     }
     initBoard() {
-        (this.ctxBoard as CanvasRenderingContext2D).strokeStyle = '#000'
+        (this.ctxBoard as CanvasRenderingContext2D).strokeStyle = '#eee'
         this.ctxBoard?.beginPath()
         for (let i = 0; i <= this.rows; i++) {
             this.ctxBoard?.moveTo(this.borderWidth / 2, i * this.itemGap + this.borderWidth / 2)
@@ -99,7 +111,7 @@ class Gobang {
         canvas.style.position = 'absolute'
         canvas.style.left = '0'
         canvas.style.top = '0'
-        canvas.style.backgroundColor = bgColor || '#eee'
+        canvas.style.backgroundColor = bgColor || '#fff'
         canvas.style.zIndex = zIndex || '1';
         return { canvas, ctx }
     }
@@ -117,6 +129,7 @@ class Gobang {
         this.canvasChess = canvasChess
         this.ctxChess = ctxChess
         this.wrapper.appendChild(this.canvasChess)
+        this.drawChess(2, 10, 10)
     }
     mount(node: HTMLElement) {
         if (this.wrapper) {
