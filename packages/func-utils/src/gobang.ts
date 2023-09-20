@@ -44,6 +44,7 @@ class Gobang {
     borderWidth = 20
     board: Point[][]
     boardProxy: Point[][]
+    chessRadius = 5
     constructor({ rows, cols, itemGap, bgColor, lineColor }: GobangOptions) {
         this.rows = rows
         this.cols = cols
@@ -80,16 +81,41 @@ class Gobang {
         })
         this.drawChessByRowCol(value, row, col)
     }
+    // 悔棋 根据位置
+    deleteChessByChessPosition (x: number, y: number) {
+        x = x - this.chessRadius
+        y = y - this.chessRadius;
+        console.log(x, y);
+       (this.ctxChess as CanvasRenderingContext2D).clearRect(x, y,2 * this.chessRadius, 2 * this.chessRadius)
+    }
+    // 根据行列
+    deleteChessByChessRowCol (row: number, col: number) {
+        const x = this.getPositionByItem(col)
+        const y = this.getPositionByItem(row)
+        this.deleteChessByChessPosition(x, y)
+    }
 
-    drawChessByRowCol (chessType: Point, x: number, y: number){
-        x  = x * this.itemGap + this.itemGap / 2
-        y = y * this.itemGap + this.itemGap / 2
+    getPositionByItem (rowOrCol: number) {
+        return rowOrCol * this.itemGap + this.borderWidth / 2
+    }
+
+    drawChessByRowCol (chessType: Point, row: number, col: number){
+        // 如果有值，说明这个点有棋子
+        if (this.boardProxy[col][row]) {
+            return
+        }
+        // 只能1 2
+        if (chessType === 0) {
+            return
+        } 
+        const x  = this.getPositionByItem(col)
+        const y = this.getPositionByItem(row)
         this.drawChess(chessType, x, y)
     }
-    drawChess(chessType: Point, x: number, y: number, r = 5) {
+    drawChess(chessType: Point, x: number, y: number) {
         (this.ctxChess as CanvasRenderingContext2D).fillStyle = chessType === 1 ? '#111' : '#eee';
         (this.ctxChess as CanvasRenderingContext2D).beginPath();
-        (this.ctxChess as CanvasRenderingContext2D).arc(x, y, r, 0, 2 * Math.PI);
+        (this.ctxChess as CanvasRenderingContext2D).arc(x, y, this.chessRadius, 0, 2 * Math.PI);
         this.ctxChess?.fill();
     }
     initBoard() {
