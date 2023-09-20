@@ -6,6 +6,18 @@ export {
     add
 }
 
+interface CanvasOptions {
+    zIndex?: string
+    width?: number
+    height?: number
+    bgColor?: string
+}
+
+interface CanvasAndCtx {
+    canvas: HTMLCanvasElement
+    ctx: CanvasRenderingContext2D | null
+} 
+
 type Point = 0 | 1 | 2
 
 interface GobangOptions {
@@ -22,8 +34,11 @@ class Gobang {
     rows: number
     cols: number
     itemGap: number
-    canvas: HTMLCanvasElement | null
-    ctx: CanvasRenderingContext2D | null
+    canvasBoard: HTMLCanvasElement | null
+    ctxBoard: CanvasRenderingContext2D | null
+    canvasChess: HTMLCanvasElement | null
+    ctxChess: CanvasRenderingContext2D | null
+    wrapper: HTMLElement | null
     bgColor: string
     lineColor: string
     borderWidth = 20
@@ -33,8 +48,11 @@ class Gobang {
         this.rows = rows
         this.cols = cols
         this.itemGap = itemGap || 20
-        this.canvas = null
-        this.ctx = null
+        this.canvasBoard = null
+        this.canvasChess = null
+        this.ctxBoard = null
+        this.ctxChess = null
+        this.wrapper = null
         this.bgColor = bgColor || '#ccc'
         this.lineColor = lineColor || '#000'
         this.board = new Array(this.rows).fill(0).map(() => new Array(this.cols).fill(0))
@@ -67,19 +85,37 @@ class Gobang {
     initBoard () {
 
     }
+    createCanvasIns ({zIndex, bgColor}:CanvasOptions): CanvasAndCtx {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        canvas.width = (this.wrapper as HTMLElement).clientWidth
+        canvas.height = (this.wrapper as HTMLElement).clientHeight
+        canvas.style.width = '100%'
+        canvas.style.height = '100%'
+        canvas.style.position = 'absolute'
+        canvas.style.left = '0'
+        canvas.style.top = '0'
+        canvas.style.backgroundColor = bgColor || '#ccc'
+        canvas.style.zIndex = zIndex || '1'
+        return {canvas, ctx}
+    }
     init() {
-        this.canvas = document.createElement('canvas')
-        this.canvas.width = this.itemGap * this.rows + this.borderWidth
-        this.canvas.height = this.itemGap * this.cols + this.borderWidth
-        this.canvas.style.backgroundColor = this.bgColor
-        this.ctx = this.canvas.getContext('2d')
-        console.log({
-            canvas: this.canvas
-        })
+        this.wrapper = document.createElement('div')
+        this.wrapper.style.position = 'relative'
+        this.wrapper.style.width = `${this.itemGap * this.rows + this.borderWidth}px`
+        this.wrapper.style.height = `${this.itemGap * this.cols + this.borderWidth}px`
+        const {canvas, ctx} = this.createCanvasIns({})
+        this.canvasBoard = canvas
+        this.ctxBoard = ctx
+        this.wrapper.appendChild(this.canvasBoard)
+        const { canvas: canvasChess, ctx: ctxChess } = this.createCanvasIns({zIndex: '2', bgColor: 'transparent'})
+        this.canvasChess = canvasChess
+        this.ctxChess = ctxChess
+        this.wrapper.appendChild(this.canvasChess)
     }
     mount(node: HTMLElement) {
-        if (this.canvas) {
-            node.appendChild(this.canvas)
+        if (this.wrapper) {
+            node.appendChild(this.wrapper)
         }
     }
     isWin() { }
