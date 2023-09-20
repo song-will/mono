@@ -66,7 +66,7 @@ class Gobang {
         return board.map((arr, index) => {
             return new Proxy(arr, {
                 set(target: Point[], prop: PropertyKey, value: Point): boolean {
-                    self.trigger(prop as number, index,value)
+                    self.trigger(prop as number, index, value)
                     return Reflect.set(target, prop, value)
                 }
             })
@@ -82,33 +82,41 @@ class Gobang {
         this.drawChessByRowCol(value, row, col)
     }
     // 悔棋 根据位置
-    deleteChessByChessPosition (x: number, y: number) {
+    deleteChessByChessPosition(x: number, y: number) {
         x = x - this.chessRadius
         y = y - this.chessRadius;
         console.log(x, y);
-       (this.ctxChess as CanvasRenderingContext2D).clearRect(x, y,2 * this.chessRadius, 2 * this.chessRadius)
+        (this.ctxChess as CanvasRenderingContext2D).clearRect(x, y, 2 * this.chessRadius, 2 * this.chessRadius)
     }
     // 根据行列
-    deleteChessByChessRowCol (row: number, col: number) {
+    deleteChessByChessRowCol(row: number, col: number) {
         const x = this.getPositionByItem(col)
         const y = this.getPositionByItem(row)
+        console.log({
+            row,
+            col,
+            x,
+            y
+        })
         this.deleteChessByChessPosition(x, y)
     }
 
-    getPositionByItem (rowOrCol: number) {
+    getPositionByItem(rowOrCol: number) {
         return rowOrCol * this.itemGap + this.borderWidth / 2
     }
 
-    drawChessByRowCol (chessType: Point, row: number, col: number){
+    drawChessByRowCol(chessType: Point, row: number, col: number) {
+        console.log('entry', chessType)
         // 如果有值，说明这个点有棋子
-        if (this.boardProxy[col][row]) {
+        if (this.boardProxy[col][row] && chessType !== 0) {
             return
         }
         // 只能1 2
         if (chessType === 0) {
+            this.deleteChessByChessRowCol(row, col)
             return
-        } 
-        const x  = this.getPositionByItem(col)
+        }
+        const x = this.getPositionByItem(col)
         const y = this.getPositionByItem(row)
         this.drawChess(chessType, x, y)
     }
@@ -155,7 +163,6 @@ class Gobang {
         this.canvasChess = canvasChess
         this.ctxChess = ctxChess
         this.wrapper.appendChild(this.canvasChess)
-        this.drawChess(2, 10, 10)
     }
     mount(node: HTMLElement) {
         if (this.wrapper) {
