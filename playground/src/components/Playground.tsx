@@ -11,10 +11,8 @@ export default defineComponent({
         const rootRef = ref<HTMLElement>()
         onMounted(() => {
             const ins = new Gobang({
-                rows: 10,
-                cols: 10,
-                width: 400,
-                height: 400,     
+                rows: 20,
+                cols: 20
             });
             console.log({ins})
             window.ins = ins

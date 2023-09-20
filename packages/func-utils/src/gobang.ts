@@ -16,15 +16,13 @@ interface CanvasOptions {
 interface CanvasAndCtx {
     canvas: HTMLCanvasElement
     ctx: CanvasRenderingContext2D | null
-} 
+}
 
 type Point = 0 | 1 | 2
 
 interface GobangOptions {
     rows: number
     cols: number
-    width: number
-    height: number
     bgColor?: string
     lineColor?: string
     itemGap?: number
@@ -43,7 +41,7 @@ class Gobang {
     lineColor: string
     borderWidth = 20
     board: Point[][]
-    boardProxy: Point [] []
+    boardProxy: Point[][]
     constructor({ rows, cols, itemGap, bgColor, lineColor }: GobangOptions) {
         this.rows = rows
         this.cols = cols
@@ -60,11 +58,11 @@ class Gobang {
         this.init()
     }
     // 添加响应式
-    reactive (board: Point [] []) {
+    reactive(board: Point[][]) {
         const self = this
         return board.map((arr, index) => {
             return new Proxy(arr, {
-                set (target: Point [], prop: PropertyKey, value: Point): boolean {
+                set(target: Point[], prop: PropertyKey, value: Point): boolean {
                     self.trigger(index, prop as number, value)
                     return Reflect.set(target, prop, value)
                 }
@@ -72,43 +70,53 @@ class Gobang {
         })
     }
     // 触发依赖
-    trigger (row: number, col: number, value: Point) {
+    trigger(row: number, col: number, value: Point) {
         console.log({
             row,
             col,
             value
         })
     }
-    downChess () {
-        
-    }
-    initBoard () {
+    downChess() {
 
     }
-    createCanvasIns ({zIndex, bgColor}:CanvasOptions): CanvasAndCtx {
+    initBoard() {
+        console.log('initBoard', this.ctxBoard);
+        (this.ctxBoard as CanvasRenderingContext2D).strokeStyle = '#000'
+        this.ctxBoard?.beginPath()
+        for (let i = 0; i <= this.rows; i++) {
+            this.ctxBoard?.moveTo(this.borderWidth / 2, i * this.itemGap + this.borderWidth / 2)
+            this.ctxBoard?.lineTo(this.borderWidth / 2 + this.rows * this.itemGap, this.borderWidth / 2 + i * this.itemGap)
+        }
+        for (let i = 0; i <= this.rows; i++) {
+            this.ctxBoard?.moveTo(this.borderWidth / 2 + i * this.itemGap, this.borderWidth / 2)
+            this.ctxBoard?.lineTo(this.borderWidth / 2 + i * this.itemGap, this.borderWidth / 2 + this.rows * this.itemGap)
+        }
+        (this.ctxBoard as CanvasRenderingContext2D).stroke();
+    }
+    createCanvasIns({ zIndex, bgColor }: CanvasOptions): CanvasAndCtx {
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
-        canvas.width = (this.wrapper as HTMLElement).clientWidth
-        canvas.height = (this.wrapper as HTMLElement).clientHeight
-        canvas.style.width = '100%'
-        canvas.style.height = '100%'
+        canvas.width = this.itemGap * this.rows + this.borderWidth
+        canvas.height = this.itemGap * this.cols + this.borderWidth
         canvas.style.position = 'absolute'
         canvas.style.left = '0'
         canvas.style.top = '0'
-        canvas.style.backgroundColor = bgColor || '#ccc'
-        canvas.style.zIndex = zIndex || '1'
-        return {canvas, ctx}
+        canvas.style.backgroundColor = bgColor || '#eee'
+        canvas.style.zIndex = zIndex || '1';
+        return { canvas, ctx }
     }
     init() {
         this.wrapper = document.createElement('div')
         this.wrapper.style.position = 'relative'
         this.wrapper.style.width = `${this.itemGap * this.rows + this.borderWidth}px`
         this.wrapper.style.height = `${this.itemGap * this.cols + this.borderWidth}px`
-        const {canvas, ctx} = this.createCanvasIns({})
+        const { canvas, ctx } = this.createCanvasIns({})
         this.canvasBoard = canvas
         this.ctxBoard = ctx
+        this.initBoard()
         this.wrapper.appendChild(this.canvasBoard)
-        const { canvas: canvasChess, ctx: ctxChess } = this.createCanvasIns({zIndex: '2', bgColor: 'transparent'})
+        const { canvas: canvasChess, ctx: ctxChess } = this.createCanvasIns({ zIndex: '2', bgColor: 'transparent' })
         this.canvasChess = canvasChess
         this.ctxChess = ctxChess
         this.wrapper.appendChild(this.canvasChess)
