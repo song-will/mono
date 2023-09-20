@@ -81,14 +81,11 @@ class Gobang {
 
     }
     initBoard() {
-        console.log('initBoard', this.ctxBoard);
         (this.ctxBoard as CanvasRenderingContext2D).strokeStyle = '#000'
         this.ctxBoard?.beginPath()
         for (let i = 0; i <= this.rows; i++) {
             this.ctxBoard?.moveTo(this.borderWidth / 2, i * this.itemGap + this.borderWidth / 2)
             this.ctxBoard?.lineTo(this.borderWidth / 2 + this.rows * this.itemGap, this.borderWidth / 2 + i * this.itemGap)
-        }
-        for (let i = 0; i <= this.rows; i++) {
             this.ctxBoard?.moveTo(this.borderWidth / 2 + i * this.itemGap, this.borderWidth / 2)
             this.ctxBoard?.lineTo(this.borderWidth / 2 + i * this.itemGap, this.borderWidth / 2 + this.rows * this.itemGap)
         }
