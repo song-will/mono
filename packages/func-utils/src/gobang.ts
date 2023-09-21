@@ -68,7 +68,7 @@ class Gobang {
         return board.map((arr, index) => {
             return new Proxy(arr, {
                 set(target: Point[], prop: PropertyKey, value: Point): boolean {
-                    self.trigger(prop as number, index, value)
+                    self.trigger(Number(prop), index, value)
                     return Reflect.set(target, prop, value)
                 }
             })
@@ -82,6 +82,7 @@ class Gobang {
             value
         })
         this.drawChessByRowCol(value, row, col)
+        console.log('isWin', this.isWin([col, row], value))
     }
     // 悔棋 根据位置
     deleteChessByChessPosition(x: number, y: number) {
@@ -120,6 +121,7 @@ class Gobang {
         }
         const x = this.getPositionByItem(col)
         const y = this.getPositionByItem(row)
+        this.toggleChessType()
         this.drawChess(chessType, x, y)
     }
     drawChess(chessType: Point, x: number, y: number) {
@@ -151,7 +153,7 @@ class Gobang {
         canvas.style.zIndex = zIndex || '1'
         return { canvas, ctx }
     }
-    bindEvent (canvas: HTMLCanvasElement) {
+    bindEvent(canvas: HTMLCanvasElement) {
         if (!canvas) return
         canvas.addEventListener('click', (e) => {
             const boardX = e.clientX - canvas.getBoundingClientRect().left - this.borderWidth / 2
@@ -163,22 +165,19 @@ class Gobang {
             this.clickHandler(boardX, boardY)
         })
     }
-    clickHandler (boardX: number, boardY: number) {
+    clickHandler(boardX: number, boardY: number) {
         const itemX = +Math.round(boardX / this.itemGap)
         const itemY = +Math.round(boardY / this.itemGap)
         const oldChessType = this.boardProxy[itemX][itemY]
-        const oldNextChessType = this.nextChessType
         try {
             this.boardProxy[itemX][itemY] = this.nextChessType
-            this.toggleChessType()
         } catch {
             // 回滚
             this.boardProxy[itemX][itemY] = oldChessType
-            this.nextChessType = oldNextChessType
         }
     }
     // 切换下一次棋子颜色 轮换
-    toggleChessType () {
+    toggleChessType() {
         this.nextChessType = this.nextChessType === 1 ? 2 : 1
     }
     init() {
@@ -203,7 +202,50 @@ class Gobang {
             node.appendChild(this.wrapper)
         }
     }
-    isWin() { }
+    isWin(point: number[], chessType: Point): boolean {
+        const isValid = (point: number[], chessType: Point) => {
+            // 落子在棋盘之内 && point颜色和当前棋子颜色一致
+            const [row, col] = point
+            console.log({ point, chessType }, chessType === this.boardProxy[col][row])
+            return row >= 0 && row < this.rows && col >= 0 && col < this.cols && this.boardProxy[col][row] === chessType
+        }
+        const createJudgment = (p1Movation: (p1: number[]) => number[], p2Movation: (p2: number[]) => number[]): (point: number[], chessType: Point) => boolean => {
+            return (point: number[], chessType: Point): boolean => {
+                let count = 1
+                let p1 = p1Movation(point)
+                let p2 = p2Movation(point)
+                while (1) {
+                    let p1Changed = false, p2Changed = false
+                    console.log({ count, isValidP1: isValid(p1, chessType) })
+                    if (isValid(p1, chessType)) {
+                        count++
+                        p1 = p1Movation(p1)
+                        p1Changed = true
+                    }
+                    if (isValid(p2, chessType)) {
+                        count++
+                        p2 = p2Movation(p2)
+                        p2Changed = true
+                    }
+                    if (count >= 5) {
+                        return true
+                    }
+                    if (!p1Changed && !p2Changed) {
+                        return false
+                    }
+                }
+                return false
+            }
+        }
+        const horJudgment = createJudgment(([row, col]) => [row, col - 1], ([row, col]) => [row, col + 1])
+        const verJudgment = createJudgment(([row, col]) => [row - 1, col], ([row, col]) => [row + 1, col])
+        const slashJudgement = createJudgment(([row, col]) => [row + 1, col - 1], ([row, col]) => [row - 1, col + 1])
+        const backSlashJudgement = createJudgment(([row, col]) => [row + 1, col + 1], ([row, col]) => [row - 1, col - 1])
+        return horJudgment(point, chessType) ||
+            verJudgment(point, chessType) ||
+            slashJudgement(point, chessType) ||
+            backSlashJudgement(point, chessType)
+    }
     tip() { }
 
 }
