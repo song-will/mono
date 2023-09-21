@@ -45,6 +45,8 @@ class Gobang {
     board: Point[][]
     boardProxy: Point[][]
     chessRadius = 5
+    strokeStyle = '#eee'
+    nextChessType: Point = 2
     constructor({ rows, cols, itemGap, bgColor, lineColor }: GobangOptions) {
         this.rows = rows
         this.cols = cols
@@ -54,8 +56,8 @@ class Gobang {
         this.ctxBoard = null
         this.ctxChess = null
         this.wrapper = null
-        this.bgColor = bgColor || '#ccc'
-        this.lineColor = lineColor || '#000'
+        this.bgColor = bgColor || '#fff'
+        this.lineColor = lineColor || '#fff'
         this.board = new Array(this.rows).fill(0).map(() => new Array(this.cols).fill(0))
         this.boardProxy = this.reactive(this.board)
         this.init()
@@ -84,9 +86,9 @@ class Gobang {
     // 悔棋 根据位置
     deleteChessByChessPosition(x: number, y: number) {
         x = x - this.chessRadius
-        y = y - this.chessRadius;
-        console.log(x, y);
-        (this.ctxChess as CanvasRenderingContext2D).clearRect(x, y, 2 * this.chessRadius, 2 * this.chessRadius)
+        y = y - this.chessRadius
+        console.log(x, y)
+        this.ctxChess!.clearRect(x, y, 2 * this.chessRadius, 2 * this.chessRadius)
     }
     // 根据行列
     deleteChessByChessRowCol(row: number, col: number) {
@@ -121,13 +123,13 @@ class Gobang {
         this.drawChess(chessType, x, y)
     }
     drawChess(chessType: Point, x: number, y: number) {
-        (this.ctxChess as CanvasRenderingContext2D).fillStyle = chessType === 1 ? '#111' : '#eee';
-        (this.ctxChess as CanvasRenderingContext2D).beginPath();
-        (this.ctxChess as CanvasRenderingContext2D).arc(x, y, this.chessRadius, 0, 2 * Math.PI);
-        this.ctxChess?.fill();
+        this.ctxChess!.fillStyle = chessType === 1 ? '#111' : '#eee'
+        this.ctxChess!.beginPath()
+        this.ctxChess!.arc(x, y, this.chessRadius, 0, 2 * Math.PI)
+        this.ctxChess?.fill()
     }
     initBoard() {
-        (this.ctxBoard as CanvasRenderingContext2D).strokeStyle = '#eee'
+        this.ctxBoard!.strokeStyle = this.strokeStyle
         this.ctxBoard?.beginPath()
         for (let i = 0; i <= this.rows; i++) {
             this.ctxBoard?.moveTo(this.borderWidth / 2, i * this.itemGap + this.borderWidth / 2)
@@ -135,7 +137,7 @@ class Gobang {
             this.ctxBoard?.moveTo(this.borderWidth / 2 + i * this.itemGap, this.borderWidth / 2)
             this.ctxBoard?.lineTo(this.borderWidth / 2 + i * this.itemGap, this.borderWidth / 2 + this.rows * this.itemGap)
         }
-        (this.ctxBoard as CanvasRenderingContext2D).stroke();
+        this.ctxBoard!.stroke()
     }
     createCanvasIns({ zIndex, bgColor }: CanvasOptions): CanvasAndCtx {
         const canvas = document.createElement('canvas')
@@ -146,12 +148,43 @@ class Gobang {
         canvas.style.left = '0'
         canvas.style.top = '0'
         canvas.style.backgroundColor = bgColor || '#fff'
-        canvas.style.zIndex = zIndex || '1';
+        canvas.style.zIndex = zIndex || '1'
         return { canvas, ctx }
+    }
+    bindEvent (canvas: HTMLCanvasElement) {
+        if (!canvas) return
+        canvas.addEventListener('click', (e) => {
+            const boardX = e.clientX - canvas.getBoundingClientRect().left - this.borderWidth / 2
+            const boardY = e.clientY - canvas.getBoundingClientRect().top - this.borderWidth / 2
+            console.log({
+                boardX,
+                boardY
+            })
+            this.clickHandler(boardX, boardY)
+        })
+    }
+    clickHandler (boardX: number, boardY: number) {
+        const itemX = +Math.round(boardX / this.itemGap)
+        const itemY = +Math.round(boardY / this.itemGap)
+        const oldChessType = this.boardProxy[itemX][itemY]
+        const oldNextChessType = this.nextChessType
+        try {
+            this.boardProxy[itemX][itemY] = this.nextChessType
+            this.toggleChessType()
+        } catch {
+            // 回滚
+            this.boardProxy[itemX][itemY] = oldChessType
+            this.nextChessType = oldNextChessType
+        }
+    }
+    // 切换下一次棋子颜色 轮换
+    toggleChessType () {
+        this.nextChessType = this.nextChessType === 1 ? 2 : 1
     }
     init() {
         this.wrapper = document.createElement('div')
         this.wrapper.style.position = 'relative'
+        this.wrapper.id = 'wrapper'
         this.wrapper.style.width = `${this.itemGap * this.rows + this.borderWidth}px`
         this.wrapper.style.height = `${this.itemGap * this.cols + this.borderWidth}px`
         const { canvas, ctx } = this.createCanvasIns({})
@@ -160,6 +193,7 @@ class Gobang {
         this.initBoard()
         this.wrapper.appendChild(this.canvasBoard)
         const { canvas: canvasChess, ctx: ctxChess } = this.createCanvasIns({ zIndex: '2', bgColor: 'transparent' })
+        this.bindEvent(canvasChess)
         this.canvasChess = canvasChess
         this.ctxChess = ctxChess
         this.wrapper.appendChild(this.canvasChess)
