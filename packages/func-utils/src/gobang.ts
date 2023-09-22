@@ -82,25 +82,18 @@ class Gobang {
             value
         })
         this.drawChessByRowCol(value, row, col)
-        console.log('isWin', this.isWin([col, row], value))
+        console.log('isWin', this.isWin([row, col], value))
     }
     // 悔棋 根据位置
     deleteChessByChessPosition(x: number, y: number) {
         x = x - this.chessRadius
         y = y - this.chessRadius
-        console.log(x, y)
         this.ctxChess!.clearRect(x, y, 2 * this.chessRadius, 2 * this.chessRadius)
     }
     // 根据行列
     deleteChessByChessRowCol(row: number, col: number) {
         const x = this.getPositionByItem(col)
         const y = this.getPositionByItem(row)
-        console.log({
-            row,
-            col,
-            x,
-            y
-        })
         this.deleteChessByChessPosition(x, y)
     }
 
@@ -109,7 +102,6 @@ class Gobang {
     }
 
     drawChessByRowCol(chessType: Point, row: number, col: number) {
-        console.log('entry', chessType)
         // 如果有值，说明这个点有棋子
         if (this.boardProxy[col][row] && chessType !== 0) {
             return
@@ -158,10 +150,6 @@ class Gobang {
         canvas.addEventListener('click', (e) => {
             const boardX = e.clientX - canvas.getBoundingClientRect().left - this.borderWidth / 2
             const boardY = e.clientY - canvas.getBoundingClientRect().top - this.borderWidth / 2
-            console.log({
-                boardX,
-                boardY
-            })
             this.clickHandler(boardX, boardY)
         })
     }
@@ -206,7 +194,6 @@ class Gobang {
         const isValid = (point: number[], chessType: Point) => {
             // 落子在棋盘之内 && point颜色和当前棋子颜色一致
             const [row, col] = point
-            console.log({ point, chessType }, chessType === this.boardProxy[col][row])
             return row >= 0 && row < this.rows && col >= 0 && col < this.cols && this.boardProxy[col][row] === chessType
         }
         const createJudgment = (p1Movation: (p1: number[]) => number[], p2Movation: (p2: number[]) => number[]): (point: number[], chessType: Point) => boolean => {
@@ -216,7 +203,6 @@ class Gobang {
                 let p2 = p2Movation(point)
                 while (1) {
                     let p1Changed = false, p2Changed = false
-                    console.log({ count, isValidP1: isValid(p1, chessType) })
                     if (isValid(p1, chessType)) {
                         count++
                         p1 = p1Movation(p1)
