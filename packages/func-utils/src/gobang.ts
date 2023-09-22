@@ -30,6 +30,8 @@ interface GobangOptions {
     itemGap?: number
 }
 
+type GameStatus = 'Ready' | 'Playing' | 'GameOver'
+
 class Gobang {
     rows: number
     cols: number
@@ -47,6 +49,7 @@ class Gobang {
     chessRadius = 5
     strokeStyle = '#eee'
     nextChessType: Point = 2
+    gameStatus: GameStatus = 'Ready'
     constructor({ rows, cols, itemGap, bgColor, lineColor }: GobangOptions) {
         this.rows = rows
         this.cols = cols
@@ -82,7 +85,10 @@ class Gobang {
             value
         })
         this.drawChessByRowCol(value, row, col)
-        console.log('isWin', this.isWin([row, col], value))
+        if (this.isWin([row, col], value)) {
+            this.gameStatus = 'GameOver'
+            this.tip(value)
+        }
     }
     // 悔棋 根据位置
     deleteChessByChessPosition(x: number, y: number) {
@@ -232,7 +238,10 @@ class Gobang {
             slashJudgement(point, chessType) ||
             backSlashJudgement(point, chessType)
     }
-    tip() { }
+    tip(chessType: Point) { 
+        const text = `Game Over, ${chessType === 1 ? '黑子' : '白子'} win`
+        alert(text)
+    }
 
 }
 
