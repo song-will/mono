@@ -79,11 +79,7 @@ class Gobang {
     }
     // 触发依赖
     trigger(row: number, col: number, value: Point) {
-        console.log({
-            row,
-            col,
-            value
-        })
+        if (this.gameStatus === 'GameOver') return
         this.drawChessByRowCol(value, row, col)
         if (this.isWin([row, col], value)) {
             this.gameStatus = 'GameOver'
@@ -238,9 +234,15 @@ class Gobang {
             slashJudgement(point, chessType) ||
             backSlashJudgement(point, chessType)
     }
-    tip(chessType: Point) { 
+    tip(chessType: Point) {
         const text = `Game Over, ${chessType === 1 ? '黑子' : '白子'} win`
-        alert(text)
+        setTimeout(() => {
+            alert(text)
+        }, 500);
+    }
+    clearChess() {
+        const { width, height } = this.canvasChess!.getBoundingClientRect()
+        this.ctxChess!.clearRect(0, 0, width, height)
     }
 
 }
